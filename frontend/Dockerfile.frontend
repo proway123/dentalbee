@@ -1,0 +1,19 @@
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install and clean dependencies
+RUN npm cache clean --force && \
+    rm -rf node_modules package-lock.json && \
+    npm install --platform=linux --arch=x64 
+
+# Copy the application code
+COPY . .
+
+EXPOSE 5173
+
+# Run React App
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]

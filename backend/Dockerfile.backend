@@ -1,0 +1,28 @@
+FROM python:3.13
+
+WORKDIR /app/backend
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libpq-dev \
+    postgresql-client \
+    gcc \
+    && rm -rf /var/lib/apt/lists/*
+
+# Add and grant permission to wait-for-it.sh
+COPY wait-for-it.sh /app/backend/wait-for-it.sh
+RUN chmod +x /app/backend/wait-for-it.sh
+
+# Install Python dependencies
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+
+# Copy project
+COPY . .
+
+# Expose App Port
+EXPOSE 8000
+
+# Run project
+CMD ["python3", "manage.py", "runserver", "0.0.0.0:8000"]
